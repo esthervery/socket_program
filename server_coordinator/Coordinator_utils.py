@@ -10,15 +10,29 @@
 # 그렇지 않다면 “safe” 메시지를 전달한다.
 
 # 내부 온도 측정 function
-def measure_temperature():
-    return 0
+def print_response(message: str, current_temp: int, upper_bound: int, lower_bound: int) -> str:
+    if message == "QUERY":
+        response = f"현재 온도: {current_temp}, 상한: {upper_bound}, 하한: {lower_bound}"
+                    
+    # Commander가 최대 온도 설정을 30°C로 설정하고자 한다면: CONFIGURE UPPER_BOUND 30
+    elif message.startswith("CONFIGURE UPPER_BOUND"):
+        _, _, value = message.split()
+        upper_bound = int(value)
+        response = f"새로운 상한: {upper_bound}"
 
+    elif message.startswith("CONFIGURE LOWER_BOUND"):
+        _, _, value = message.split()
+        lower_bound = int(value)
+        response = f"새로운 하한: {lower_bound}"
 
- # 연결 수립 이후 통신 부분
-def communicate(client_socket):
-        while True:
-            data = client_socket.recv(1024)
-            if not data:
-                break
-            print(f"Received from client: {data.decode()}")
-            client_socket.sendall(b"ACK")
+    # 지속적으로 들어오는 POLLING 메시지 처리
+    elif message == "POLLING":
+        if current_temp > upper_bound or current_temp < lower_bound:
+            response = "warning"
+        else:
+            response = "safe"
+
+    else:
+        response = "Unknown command"
+    return response
+
