@@ -1,5 +1,6 @@
 import socket
-import os
+# import os
+from multiprocessing import Process
 from Coordinator_utils import print_response
 
 current_temp = 25
@@ -47,6 +48,11 @@ def start_server(host='127.0.0.1', port=8080):
         else:  
             client_socket.close()  # 부모 프로세스에서는 클라이언트 소켓 닫고 서버 소켓으로 돌아감
 
+def create_process(target, args=()):
+    # target: 실행할 함수, args: 함수에 전달할 인수 튜플
+    process = Process(target=target, args=args)
+    process.start() # 프로세스 시작
+    return process
 
 if __name__ == '__main__':  
     start_server()
