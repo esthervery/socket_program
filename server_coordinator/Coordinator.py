@@ -1,17 +1,17 @@
-# 해당 system은 세 가지 entities로 구성되며, 클라이언트 측의 ‘Commander’와 ‘Monitor’, 
-# 서버 측의 ‘Coordinator’로 이루어져 있다. 
+# QUERY: 현재 온도 및 설정된 상한/하한값을 반환, Commander로부터 수신
+# 응답 형태: "Current: 25, Upper: 30, Lower: -5"
 
-# 클라이언트 중 하나인 ‘Commander’에서는 서버 측의 ‘Coordinator’에 명령어를 전송
-# 하여 현재 설정을 확인(“QUERY”)하거나 새로운 설정(“CONFIGURE)을 적용할 수 있다. 
+# CONFIGURE: 새로운 상한/하한값을 설정, Commander로부터 수신
+# 응답 형태: "Updated upper bound to 30"
 
-# 서버 측의 ‘Coordinator’는 ‘Monitor’가 보내온 “POLLING” 메시지를 받고 온도가 변
-# 경된다고 가정하여 내부 온도 측정 function을 수행한다. 
-# (hint: while 반복문 내에 sleep 함수를 사용하여 반복적으로 send/receive를 수행) 
+# POLLING: 현재 온도가 안전범위 내인지 검사, Monitor로부터 수신
+# 응답 형태: "warning" 또는 "safe"
 
-# 서버 측의 ‘Coordinator’는 ‘Monitor’가 보내온 “POLLING” 메시지를 받고 온도가 변
-# 경된다고 가정하여 내부 온도 측정 function을 수행한다. 만약 설정해 놓은 온도의 범
-# 위를 벗어나면 ‘Monitor’에 경고 메시지(“warning”)를 전달한다. 그렇지 않다면 “safe” 
-# 메시지를 전달한다.
+# 상태 변수 
+current_temp = 25
+upper_bound = 30
+lower_bound = -5
+
 
 import socket
 
@@ -29,4 +29,8 @@ def start_server(host='127.0.0.1', port=8080):
         print(f"Connection from {addr}")
         client_socket.sendall(b"Hello, World!")
         client_socket.close()
+
+        # 연결이 생성되면 자식 프로세스 생성, 1:1 통신 전환
+        # 자식 프로세스 내부에서 수신 메세지에 따른 동작 구형
+        # 동작은 utils로 분리하고 호출하는 구조 
     
