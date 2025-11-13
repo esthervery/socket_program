@@ -17,8 +17,9 @@ def monitor_program(host='127.0.0.1', port=8080, interval=5):
             time.sleep(interval)  
     except KeyboardInterrupt:
         print("Exiting monitor.")
-    finally:
         client_socket.close()
+    # finally:
+    #     client_socket.close()
         
 if __name__ == '__main__':
     monitor_program()

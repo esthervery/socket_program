@@ -27,7 +27,7 @@ def handle_client(client_socket, addr):
                 
                 # 클라이언트가 연결을 끊은 경우 (not data)
                 if not data:
-                    print(f"Client {addr} disconnected")
+                    print(f"Client {addr} disconnected (not data)")
                     break
 
                 message = data.decode()

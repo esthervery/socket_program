@@ -14,17 +14,20 @@ def commander_program(host='127.0.0.1', port=8080):
         client_socket.sendall(command.encode())
 
         if command == "EXIT":
-            print("Exiting commander.")
+            print("Commander program exiting.")
+            client_socket.close()
             break
 
         try: 
             data = client_socket.recv(1024)
             print(f"Response from server: {data.decode()}")
+            
         except Exception as e:
             print(f"Error communicating with server: {e}")
-            break
-        finally:
             client_socket.close()
+            break
+        # finally:
+        #     client_socket.close()
     
 if __name__ == '__main__':
     commander_program()
