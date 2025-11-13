@@ -33,7 +33,7 @@ def print_response(message: str, current_temp: int, upper_bound: int, lower_boun
             response = "safe"
 
     elif message == "EXIT":
-        response = "Exiting"
+        response = "Exiting..."
         
     else:
         response = "Unknown command"

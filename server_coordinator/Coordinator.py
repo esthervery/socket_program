@@ -26,13 +26,20 @@ def handle_client(client_socket, addr):
                 global current_temp, upper_bound, lower_bound
 
                 response = print_response(message, current_temp, upper_bound, lower_bound)
-                if response == "Exiting":
-                    break
+                
+                # 응답을 먼저 전송
                 client_socket.sendall(response.encode())
+                
+                # Exiting이면 연결 종료
+                if response == "Exiting...":
+                    print(f"Exit command received from {addr}")
+                    break
 
             except Exception as e:
                 print(f"Error handling client {addr}: {e}")
                 break
+            
+    # 무슨 일이 있어도 항상 실행되는 코드 블록
     finally:
         client_socket.close()
         print(f"Connection closed from {addr}")
@@ -43,17 +50,24 @@ def start_server(host='127.0.0.1', port=8080):
     server_socket.listen(5)
     print(f"Server listening on {host}:{port}") 
 
-    # 클라이언트 연결 대기 무한 루프 (server_socket) 활용 
-    while True:
-        client_socket, addr = server_socket.accept()
-        
-        # 새로운 스레드에서 클라이언트 처리
-        client_thread = threading.Thread(
-            target=handle_client, 
-            args=(client_socket, addr),
-            daemon=True  # 메인 프로그램 종료시 스레드도 종료
-        )
-        client_thread.start()
+    try: # 강제종료 예외처리 
+        while True: # 클라이언트 연결 대기 무한 루프 (server_socket) 활용
+            client_socket, addr = server_socket.accept()
+            
+            # 새로운 스레드에서 클라이언트 처리
+            client_thread = threading.Thread(
+                target=handle_client, 
+                args=(client_socket, addr),
+                daemon=True # 메인 프로그램 종료시 스레드도 종료
+            )
+            client_thread.start()
+    
+    except KeyboardInterrupt:
+        print("\n서버를 종료합니다...")
+    
+    finally:
+        server_socket.close()
+        print("서버 소켓이 닫혔습니다.")
 
 if __name__ == '__main__':  
     start_server()

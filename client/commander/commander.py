@@ -3,6 +3,7 @@
 # CONFIGURE UPPER_BOUND <숫자>
 # CONFIGURE LOWER_BOUND <숫자>
 # exit  ← (프로그램 종료용)
+
 import socket
 def commander_program(host='127.0.0.1', port=8080):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,10 +17,14 @@ def commander_program(host='127.0.0.1', port=8080):
             print("Exiting commander.")
             break
 
-        data = client_socket.recv(1024)
-        print(f"Response from server: {data.decode()}")
-
-    client_socket.close()
+        try: 
+            data = client_socket.recv(1024)
+            print(f"Response from server: {data.decode()}")
+        except Exception as e:
+            print(f"Error communicating with server: {e}")
+            break
+        finally:
+            client_socket.close()
     
 if __name__ == '__main__':
     commander_program()
