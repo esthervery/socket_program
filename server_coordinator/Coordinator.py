@@ -12,14 +12,23 @@ def handle_client(client_socket, addr):
     """클라이언트 연결을 처리하는 함수"""
     print(f"Connection from {addr}")
     
+    # 5분(300초) timeout 설정
+    client_socket.settimeout(300)
+    
     try:
         client_socket.sendall(b"Hello, World!")
         
         while True:
             try:
                 data = client_socket.recv(1024)
+                # data = client_socket.recv(1024)
+                # 여기서 멈춰있음 (블로킹)
+                # 데이터가 올 때까지 대기... -> None을 반환하지 않음
+                
+                # 클라이언트가 연결을 끊은 경우 (not data)
                 if not data:
-                    break  # 연결 종료
+                    print(f"Client {addr} disconnected")
+                    break
 
                 message = data.decode()
 
@@ -30,11 +39,17 @@ def handle_client(client_socket, addr):
                 # 응답을 먼저 전송
                 client_socket.sendall(response.encode())
                 
-                # Exiting이면 연결 종료
-                if response == "Exiting...":
+                # Exiting 메시지를 받으면 연결 종료
+                if response == "Exiting":
                     print(f"Exit command received from {addr}")
                     break
 
+            except socket.timeout:
+                # 5분 동안 메시지가 없으면 연결 종료
+                print(f"Timeout: No message from {addr} for 5 minutes")
+                client_socket.sendall(b"Connection timeout. Closing connection.")
+                break
+                
             except Exception as e:
                 print(f"Error handling client {addr}: {e}")
                 break
@@ -43,6 +58,7 @@ def handle_client(client_socket, addr):
     finally:
         client_socket.close()
         print(f"Connection closed from {addr}")
+
 
 def start_server(host='127.0.0.1', port=8080): 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
