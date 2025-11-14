@@ -31,7 +31,7 @@ def is_valid_command(command: str) -> bool:
     
     return False
 
-def commander_program(host='127.0.0.1', port=8080):
+def commander_program(host='127.0.0.2', port=8080):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
     

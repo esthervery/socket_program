@@ -3,7 +3,7 @@
 
 import socket
 import time 
-def monitor_program(host='127.0.0.1', port=8080, interval=5): 
+def monitor_program(host='127.0.0.2', port=8080, interval=5): 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
 

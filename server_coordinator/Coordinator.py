@@ -10,6 +10,9 @@ tm = TemperatureManager()
 def handle_client(client_socket, addr):
     """클라이언트 연결을 처리하는 함수"""
     print(f"server log: Client socket Created. Connection {addr}")
+    current_temp, upper_bound, lower_bound = tm.get_all()
+    initial_message = f"Connected! Current temperature settings: 현재 온도: {current_temp}, 상한: {upper_bound}, 하한: {lower_bound}"
+    client_socket.sendall(initial_message.encode())
     
     # 5분(300초) timeout 설정
     client_socket.settimeout(300)
@@ -49,7 +52,7 @@ def handle_client(client_socket, addr):
             break
 
 
-def start_server(host='127.0.0.1', port=8080): 
+def start_server(host='127.0.0.2', port=8080): 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((host, port))
