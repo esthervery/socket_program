@@ -10,7 +10,13 @@
 # 그렇지 않다면 “safe” 메시지를 전달한다.
 
 # 내부 온도 측정 function
-def print_response(message: str, current_temp: int, upper_bound: int, lower_bound: int) -> str:
+
+import random
+
+def refresh_temp(curr_temp):
+    return curr_temp + random.randint(-1, 1)
+
+def print_response(message: str, current_temp: int, upper_bound: int, lower_bound: int) -> tuple:
     if message == "QUERY":
         response = f"현재 온도: {current_temp}, 상한: {upper_bound}, 하한: {lower_bound}"
                     
@@ -35,7 +41,5 @@ def print_response(message: str, current_temp: int, upper_bound: int, lower_boun
     elif message == "EXIT":
         response = "Exiting..."
         
-    else:
-        response = "Unknown command"
-    return response
+    return response, current_temp, upper_bound, lower_bound
 
